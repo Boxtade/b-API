@@ -20,7 +20,7 @@ exports.register = function(req,res){
 
     register.register(email,password,function (found) {
         console.log(found);
-        m_users.backup();
+        m_users.m.backup();
         res.json(found);
     });
 };
@@ -32,7 +32,7 @@ exports.password_change = function(req, res) {
 
     password.change(id,opass,npass,function(found){
         console.log(found);
-        m_users.backup();
+        m_users.m.backup();
         res.json(found);
     });
 };
@@ -54,7 +54,7 @@ exports.password_reset = function(req, res) {
 
     password.reset(email,code,npass,function(found){
         console.log(found);
-        m_users.backup();
+        m_users.m.backup();
         res.json(found);
 
     });

@@ -34,6 +34,8 @@
 
 var express  = require('express');
 var connect = require('connect');
+var cors = require('cors');
+
 var app      = express();
 var port     = process.env.PORT || 5002;
 // Configuration

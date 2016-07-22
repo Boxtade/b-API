@@ -2,8 +2,6 @@ var users = require("../handler/users/users");
 
 module.exports = function(app) {        
     
-     app.get('/users', function(req, res) {res.end("Api users works.");});     
-
      app.post('/users/login',users.login);     
 
      app.post('/users/register',users.register);     

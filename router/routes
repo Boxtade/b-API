@@ -2,7 +2,7 @@ var r_users = require("./route_users");
 var r_bthinker = require("./route_b-thinker");
 
 module.exports = function(app) {
-    app.get('/status', function(req, res) {res.end("Services 's b-API are working.");});
+    app.get('/status', function(req, res) {res.end("Services's b-API are working.");});
     r_users(app);
     r_bthinker(app);
 };

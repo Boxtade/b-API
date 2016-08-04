@@ -1,6 +1,5 @@
 var crypto = require('crypto'); 
-var rand = require('csprng'); 
-var mongoose = require('mongoose');
+var rand = require('csprng');
 var m_users = require('../../model/model_users');   
 
 

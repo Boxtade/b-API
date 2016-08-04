@@ -8,5 +8,7 @@ var tasksSchema = mongoose.Schema({
     token:String
 });
 
-module.exports = mongoose.model('tasks', tasksSchema);
-module.exports = new require('./model')();
+module.exports = require('./model');
+module.exports.open();
+module.exports = module.exports.createModel('tasks', tasksSchema);
+

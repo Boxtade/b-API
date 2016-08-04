@@ -1,21 +1,36 @@
 var mongoose = require('mongoose');
 var backup = require('mongodb-backup');
+var db;
+var url;
 
-function model(){
+module.exports.debugMode = false;
 
-    this.db = mongoose.connect('mongodb://localhost:27017/boxtade');
+module.exports.open = function(){
+    db = mongoose.connect(url);
+};
 
-    this.backup =  function(){
+module.exports.configUrl = function(u){
+    console.log('Dans config : ',u);
+    url = u;
+};
+
+module.exports.backup = function(){
+
+    if(!module.exports.debugMode) {
         backup({
-            uri: 'mongodb://localhost:27017/boxtade', // mongodb://<dbuser>:<dbpassword>@<dbdomain>.mongolab.com:<dbport>/<dbdatabase>
+            uri: url, // mongodb://<dbuser>:<dbpassword>@<dbdomain>.mongolab.com:<dbport>/<dbdatabase>
             root: "./",
-            collections:['users', "tasks"]
+            collections: ['users', "tasks"]
         });
-    };
-
-    this.close = function(){
-        this.db.disconnect();
     }
-}
+};
 
-module.exports = model;
+module.exports.close = function(){
+    db.connection.close();
+};
+
+
+module.exports.createModel = function(dbName, dbSchema){
+    return mongoose.model(dbName, dbSchema);;
+};
+

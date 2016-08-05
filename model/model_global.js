@@ -1,14 +1,10 @@
 var mongoose = require('mongoose');
 
-var tasksSchema = mongoose.Schema({
-    id : Number,
-    count: Number,
-    title: String,
-    content : String,
-    token:String
+var globalSchema = mongoose.Schema({
+    count_tasks: Number
 });
 
-module.exports = require('./model').createModel('tasks', tasksSchema);
+module.exports = require('./model').createModel('globals', globalSchema);
 module.exports.open = function(){require('./model').open()};
 module.exports.close = function(){require('./model').close()};
 module.exports.backup = function(){require('./model').backup()};

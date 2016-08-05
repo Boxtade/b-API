@@ -10,7 +10,6 @@ module.exports.open = function(){
 };
 
 module.exports.configUrl = function(u){
-    console.log('Dans config : ',u);
     url = u;
 };
 
@@ -20,7 +19,7 @@ module.exports.backup = function(){
         backup({
             uri: url, // mongodb://<dbuser>:<dbpassword>@<dbdomain>.mongolab.com:<dbport>/<dbdatabase>
             root: "./",
-            collections: ['users', "tasks"]
+            collections: ['users', "tasks", "globals"]
         });
     }
 };

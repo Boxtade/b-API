@@ -39,4 +39,4 @@ exports.register = function(email,password,callback) {
     else{
         callback({'res':false,'response':"Email Not Valid"});
     }
-}  
+}  ;

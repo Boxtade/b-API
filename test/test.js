@@ -1,5 +1,6 @@
 var request = require("supertest");
 var mongoose = require('mongoose');
+var global = require('../handler/global/global');
 
 var app;
 var token1,token2;
@@ -17,10 +18,17 @@ module.exports = function(a) {
     });
     describe('users', function () {
         describe("GET/ status", getStatus);
-        describe("POST/ users/register",postUsersRegister);
-        describe("POST/ users/login",postUsersLogin);
-        describe("POST/ users/token",postUsersToken);
-        describe("POST/ users/password/change",postUsersPasswordChange);
+        describe("POST/ users/register", postUsersRegister);
+        describe("POST/ users/login", postUsersLogin);
+        describe("POST/ users/token", postUsersToken);
+        describe("POST/ users/password/change", postUsersPasswordChange);
+    });
+    describe('global',function(){
+        describe("GET/ global variable : count_tasks",getCountTasks);
+        describe("SET/ global variable : count_tasks = 3",setCountTasks);
+    });
+    describe('bthinker tasks/',function(){
+        describe("POST/ bthinker/tasks",postCreateTask);
     });
 };
 
@@ -218,5 +226,55 @@ var postUsersPasswordChange = function(){
                 .end(done);
         });
     });
+};
+
+var getCountTasks = function(){
+    it("should have a number more than -1",function(done){
+        global.getCountTasks(function(count){
+            if(count == -1)
+                throw new Error("Error global variable : count_tasks");
+            done();
+        })
+    })
+};
+
+var setCountTasks = function(){
+    it("should have a number equal to 3",function(done){
+        global.setCountTasks(3,function(code) {
+            if(code == -1)
+                throw new Error("Error in setCountTasks");
+            global.getCountTasks(function (count) {
+                if (count != 3)
+                    throw new Error("Error global variable : count_tasks");
+                done();
+            })
+        })
+    })
+};
+
+var postCreateTask = function(){
+    describe("should create ten posts", function () {
+        for(var i = 0;i<10;i++){
+            it("should have http code : 200", function (done) {
+                var json = {
+                    title: "My task",
+                    content : "Voici le contenu du post. Interessant, non!!!!",
+                    token:token1
+                };
+
+                request(app)
+                    .post('/bthinker/tasks')
+                    .set('Content-Type', 'application/json')
+                    .send(json)
+                    .expect(function (res) {
+                        if (!res.body.res){
+                            throw new Error("Error during creation : " + res.body.response);
+                        }
+                    })
+                    .expect(200,done);
+            });
+        }
+    });
+
 };
 

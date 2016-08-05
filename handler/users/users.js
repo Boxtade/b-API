@@ -9,9 +9,7 @@ exports.login = function(req,res) {
     var email = req.body.email;
     var password = req.body.password;
 
-
     login.login(email, password, function (found) {
-        console.log(found);
         res.json(found);
         m_users.close();
     });
@@ -23,7 +21,6 @@ exports.register = function(req,res){
     var password = req.body.password;
 
     register.register(email,password,function (found) {
-        console.log(found);
         m_users.backup();
         m_users.close();
         res.json(found);
@@ -37,7 +34,6 @@ exports.password_change = function(req, res) {
     var npass = req.body.newpass;
 
     password.change(id,opass,npass,function(found){
-        console.log(found);
         m_users.backup();
         res.json(found);
         m_users.close();
@@ -74,7 +70,6 @@ exports.token =  function(req, res) {
     var tkn = req.body.token;
 
     token.token(tkn,function(found){
-        console.log(found);
         res.json(found);
         m_users.close();
     });

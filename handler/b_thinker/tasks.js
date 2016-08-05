@@ -1,38 +1,31 @@
-/**
- * Created by Kevin on 2015-11-11.
- */
-var tasks = require('./tasks');
 var m_tasks = require('../../model/model_tasks');
-var m_users = require('../../model/model_users');
-var _checkIfUserIsValid = function(token,callback){
-    m_users.find({token: token},function(err,users) {
-        if (users.length != 0) {
-            callback({'res':false,"response":"User doesn't exist"});
-        }
-        else
-            callback({'res':true,"response":"User exists"});
-    });
-};
+var global = require('../../handler/global/global');
 
-exports.create_task = function(req,res){
-    m_tasks.open();
-    var token = req.body.token;
-    _checkIfUserIsValid(token,function(err){
-        if(err.res)
-            res.status(400).json(err);
-        else{
-            var args = {
-                title:req.body["title"],
-                content:req.body["content"],
-                token:token
-            };
-            tasks.create_task(args,function(found){
-                m_tasks.backup();
-                res.status(200).json(found);
-                m_tasks.close();
-            })
-        }
-    });
+exports.create_task = function(args,callback){
+    if(args.content === undefined && args.title === undefined)
+        callback({'res':false, 'response': 'Bad request : no "tasks" object'});
+    else
+    {
+        global.getCountTasks(function(count){
+            count += 1;
+            var task = new m_tasks({
+                id:Math.round(Math.random()*1200000000),
+                count:count,
+                title:args.title,
+                content:args.content,
+                token:args.token
+            });
+            task.save(function(err){
+                if(err)
+                    callback({'res':false,'response':"Don't save task"});
+                global.setCountTasks(count,function(err){
+                    if(err)
+                        callback({'res':false,'response':"Error updating count_tasks"});
+                    callback({'res':true,'response':"New task created."});
+                })
+            });
+        });
+    }
 };
 
 exports.get_tasks = function(request,response){
@@ -68,7 +61,7 @@ exports.update_task = function(request,response){
 exports.delete_task  = function(request,response){
     var index = findTask(request.params.id);
     if(index === undefined)
-       response.status(404).send("Not Found");
+        response.status(404).send("Not Found");
     exports.tasks.splice(index,1);
     exports.get_tasks(request,response);
 };

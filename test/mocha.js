@@ -5,6 +5,7 @@ var cors = require('cors');
 
 var app      = express();
 app.constant = require('../config/constant');
+app.constant.debug_mode = true;
 app.db = require("../model/model");
 app.db.debugMode = true;
 app.db.configUrl(app.constant.url_test);

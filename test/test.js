@@ -16,19 +16,24 @@ module.exports = function(a) {
         });
 
     });
-    describe('users', function () {
+    describe('status', function () {
         describe("GET/ status", getStatus);
+    });
+    describe('users', function () {
         describe("POST/ users/register", postUsersRegister);
         describe("POST/ users/login", postUsersLogin);
         describe("POST/ users/token", postUsersToken);
+    });
+    describe('password', function () {
         describe("POST/ users/password/change", postUsersPasswordChange);
+        describe("POST/ users/password/code",postUsersPasswordCodeAndReset);
+    });
+    describe('bthinker tasks/',function(){
+        describe("POST/ bthinker/tasks",postCreateTask);
     });
     describe('global',function(){
         describe("GET/ global variable : count_tasks",getCountTasks);
         describe("SET/ global variable : count_tasks = 3",setCountTasks);
-    });
-    describe('bthinker tasks/',function(){
-        describe("POST/ bthinker/tasks",postCreateTask);
     });
 };
 
@@ -64,11 +69,11 @@ var postUsersRegister = function() {
                 .set('Content-Type', 'application/json')
                 .send(json)
                 .expect(function (res) {
-                    if (!res.body.res){
+                    if (!res.body.res) {
                         throw new Error("Error during creation : " + res.body.response);
                     }
                 })
-                .expect(200,done);
+                .expect(200, done);
         });
         it("users2 : boxtade@gmail.com", function (done) {
             var json = {
@@ -81,12 +86,58 @@ var postUsersRegister = function() {
                 .set('Content-Type', 'application/json')
                 .send(json)
                 .expect(function (res) {
-                    if (!res.body.res){
+                    if (!res.body.res) {
                         throw new Error("Error during creation : " + res.body.response);
                     }
                 })
                 .expect(200)
                 .end(done);
+        });
+        it("should not create users3 : users3@gmail.com", function (done) {
+            var json = {
+                email: 'users3@gmail.com',
+                password: 'ab1g'
+            };
+
+            request(app)
+                .post('/users/register')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                    else{
+                        console.log(res.body.response);
+                    }
+                })
+                .expect(200)
+                .end(function(){
+                    setTimeout(done,1000);
+                });
+        });
+        it("should not create users4 : users4@hotmail.com", function (done) {
+            var json = {
+                email: 'users4@hotmail.com',
+                password: 'Ab12345'
+            };
+
+            request(app)
+                .post('/users/register')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                    else{
+                        console.log(res.body.response);
+                    }
+                })
+                .expect(200)
+                .end(function(){
+                    setTimeout(done,1000);
+                });
         });
     });
 };
@@ -150,6 +201,7 @@ var postUsersToken = function(){
                 .set('Content-Type', 'application/json')
                 .send(json)
                 .expect(function (res) {
+                    console.log("token kvin.salles@gmail.com : "+res.body.token);
                     if (!res.body.res){
                         throw new Error("Error during creation : " + res.body.response);
                     }
@@ -171,6 +223,7 @@ var postUsersToken = function(){
                 .set('Content-Type', 'application/json')
                 .send(json)
                 .expect(function (res) {
+                    console.log("token boxtade@gmail.com : "+res.body.token);
                     if (!res.body.res){
                         throw new Error("Error during creation : " + res.body.response);
                     }
@@ -219,6 +272,89 @@ var postUsersPasswordChange = function(){
                 .send(json)
                 .expect(function (res) {
                     if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                })
+                .expect(200)
+                .end(done);
+        });
+    });
+};
+
+var postUsersPasswordCodeAndReset = function(){
+    var resetCode = 0;
+    describe("should can reset a lost password of kvin.salles@gmail.com user ", function () {
+        it("reset code", function (done) {
+            var json = {
+                email: "kvin.salles@gmail.com"
+            };
+            request(app)
+                .post('/users/password/code')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    console.log("Code : "+res.body.code);
+                    resetCode = res.body.code;
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                })
+                .expect(200)
+                .end(done);
+        });
+        it("reset password", function (done) {
+            var json = {
+                email: "kvin.salles@gmail.com",
+                code:resetCode,
+                newpass: "Ab123456"
+            };
+            request(app)
+                .post('/users/password/reset')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                })
+                .expect(200)
+                .end(done);
+        });
+        it("login kvin.salles@gmail.com", function (done) {
+            var json = {
+                email: 'kvin.salles@gmail.com',
+                password: 'Ab123456'
+            };
+
+            request(app)
+                .post('/users/login')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                    else{
+                        token1 = res.body.token;
+                    }
+                })
+                .expect(200)
+                .end(done);
+        });
+    });
+    describe("should cannot reset a lost password of boom@gmail.com user ", function () {
+        it("reset code", function (done) {
+            var json = {
+                email: "boom@gmail.com"
+            };
+            request(app)
+                .post('/users/password/code')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    console.log("Code : "+res.body.code);
+                    resetCode = res.body.code;
+                    if (res.body.res){
                         throw new Error("Error during creation : " + res.body.response);
                     }
                 })

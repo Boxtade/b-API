@@ -1,0 +1,493 @@
+{ [Error: Cannot find module '../build/Release/bson'] code: 'MODULE_NOT_FOUND' }
+    <section class="suite">
+      <h1>status</h1>
+      <dl>
+        <section class="suite">
+          <h1>GET/ status</h1>
+          <dl>
+            <dt>should have status 'Services's b-API are working.' </dt>
+            <dd><pre><code>request(app)
+    .get(&quot;/status&quot;)
+    .expect(function(res) {
+        if(&quot;Services's b-API are working.&quot; != res.text )
+            throw new Error(&quot;nothing status 'Services's b-API are working.'&quot;);
+    })
+    .end(done);</code></pre></dd>
+            <dt>should have http code 200</dt>
+            <dd><pre><code>request(app)
+    .get(&quot;/status&quot;)
+    .expect(200)
+    .end(done);</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>users</h1>
+      <dl>
+        <section class="suite">
+          <h1>POST/ users/register</h1>
+          <dl>
+            <section class="suite">
+              <h1>should create two users</h1>
+              <dl>
+                <dt>users1 : kvin.salles@gmail.com</dt>
+                <dd><pre><code>var json = {
+    email: 'kvin.salles@gmail.com',
+    password: 'Ab123456'
+};
+request(app)
+    .post('/users/register')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>users2 : boxtade@gmail.com</dt>
+                <dd><pre><code>var json = {
+    email: 'boxtade@gmail.com',
+    password: 'Ab123456'
+};
+request(app)
+    .post('/users/register')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+              </dl>
+            </section>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>POST/ users/login</h1>
+          <dl>
+            <section class="suite">
+              <h1>should login two users</h1>
+              <dl>
+                <dt>login kvin.salles@gmail.com</dt>
+                <dd><pre><code>var json = {
+    email: 'kvin.salles@gmail.com',
+    password: 'Ab123456'
+};
+request(app)
+    .post('/users/login')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+        else{
+            token1 = res.body.token;
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+                <dt>login boxtade@gmail.com</dt>
+                <dd><pre><code>var json = {
+    email: 'boxtade@gmail.com',
+    password: 'Ab123456'
+};
+request(app)
+    .post('/users/login')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+        else{
+            token2 = res.body.token;
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+              </dl>
+            </section>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>POST/ users/token</h1>
+          <dl>
+            <section class="suite">
+              <h1>should same token for both users</h1>
+              <dl>
+token kvin.salles@gmail.com : 723fc4bb4ab43ba11840a1a81bf39f9e8a64f3b592ae50e48e7ff5cf22ac9e1c320c1f6df2087658bc5962464fecb6ef65b174db58fd9e3a040326e9d47162ab
+                <dt>check token kvin.salles@gmail.com</dt>
+                <dd><pre><code>var json = {
+    token: token1
+};
+request(app)
+    .post('/users/token')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        console.log(&quot;token kvin.salles@gmail.com : &quot;+res.body.token);
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+        else{
+            if(res.body.token != token1)
+                throw new Error(&quot;It doesn't same token&quot;);
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+token boxtade@gmail.com : cb26954cb14ff210b878647c4d6d448acf0ef0bee525b23afa72221b32b25dfd363c5e73ab1738f9834096eeac73947d5cf21922399e847713402352da5a93ca
+                <dt>check token boxtade@gmail.com</dt>
+                <dd><pre><code>var json = {
+    token: token2
+};
+request(app)
+    .post('/users/token')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        console.log(&quot;token boxtade@gmail.com : &quot;+res.body.token);
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+        else{
+            if(res.body.token != token2)
+                throw new Error(&quot;It doesn't same token&quot;);
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+              </dl>
+            </section>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>password</h1>
+      <dl>
+        <section class="suite">
+          <h1>POST/ users/password/change</h1>
+          <dl>
+            <section class="suite">
+              <h1>should be able to change password for both users</h1>
+              <dl>
+                <dt>change password kvin.salles@gmail.com</dt>
+                <dd><pre><code>var json = {
+    oldpass: &quot;Ab123456&quot;,
+    newpass: &quot;Xy456789&quot;,
+    token:token1
+};
+request(app)
+    .post('/users/password/change')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+                <dt>change password boxtade@gmail.com</dt>
+                <dd><pre><code>var json = {
+    oldpass: &quot;Ab123456&quot;,
+    newpass: &quot;Xy456789&quot;,
+    token:token2
+};
+request(app)
+    .post('/users/password/change')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+              </dl>
+            </section>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>POST/ users/password/code</h1>
+          <dl>
+            <section class="suite">
+              <h1>should have an email with reset code of kvin.salles@gmail.com</h1>
+              <dl>
+CODE CODE...
+{ code: 'n9ia9b',
+  response: 'Check your Email and enter the verification code to reset your Password.',
+  res: true }
+Code : n9ia9b
+                <dt>reset code</dt>
+                <dd><pre><code>var json = {
+    email: &quot;kvin.salles@gmail.com&quot;
+};
+request(app)
+    .post('/users/password/code')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        console.log(&quot;Code : &quot;+res.body.code);
+        resetCode = res.body.code;
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+                <dt>reset password</dt>
+                <dd><pre><code>var json = {
+    email: &quot;kvin.salles@gmail.com&quot;,
+    code:resetCode,
+    newpass: &quot;Ab123456&quot;
+};
+request(app)
+    .post('/users/password/reset')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+                <dt>login kvin.salles@gmail.com</dt>
+                <dd><pre><code>var json = {
+    email: 'kvin.salles@gmail.com',
+    password: 'Ab123456'
+};
+request(app)
+    .post('/users/login')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+        else{
+            token1 = res.body.token;
+        }
+    })
+    .expect(200)
+    .end(done);</code></pre></dd>
+              </dl>
+            </section>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>bthinker tasks/</h1>
+      <dl>
+        <section class="suite">
+          <h1>POST/ bthinker/tasks</h1>
+          <dl>
+            <section class="suite">
+              <h1>should create ten posts</h1>
+              <dl>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+                <dt>should have http code : 200</dt>
+                <dd><pre><code>var json = {
+    title: &quot;My task&quot;,
+    content : &quot;Voici le contenu du post. Interessant, non!!!!&quot;,
+    token:token1
+};
+request(app)
+    .post('/bthinker/tasks')
+    .set('Content-Type', 'application/json')
+    .send(json)
+    .expect(function (res) {
+        if (!res.body.res){
+            throw new Error(&quot;Error during creation : &quot; + res.body.response);
+        }
+    })
+    .expect(200,done);</code></pre></dd>
+              </dl>
+            </section>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>global</h1>
+      <dl>
+        <section class="suite">
+          <h1>GET/ global variable : count_tasks</h1>
+          <dl>
+            <dt>should have a number more than -1</dt>
+            <dd><pre><code>global.getCountTasks(function(count){
+    if(count == -1)
+        throw new Error(&quot;Error global variable : count_tasks&quot;);
+    done();
+})</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>SET/ global variable : count_tasks = 3</h1>
+          <dl>
+            <dt>should have a number equal to 3</dt>
+            <dd><pre><code>global.setCountTasks(3,function(code) {
+    if(code == -1)
+        throw new Error(&quot;Error in setCountTasks&quot;);
+    global.getCountTasks(function (count) {
+        if (count != 3)
+            throw new Error(&quot;Error global variable : count_tasks&quot;);
+        done();
+    })
+})</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>

@@ -28,8 +28,8 @@ exports.create_task = function(req,res){
             };
             tasks.create_task(args,function(found){
                 m_tasks.backup();
-                res.status(200).json(found);
                 m_tasks.close();
+                res.status(200).json(found);
             })
         }
     });

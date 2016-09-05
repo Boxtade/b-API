@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./b_api.js",
-    "test": "mocha test/mocha.js && mocha test/mocha.js --reporter doc > test/report/mocha.html || mocha test/mocha.js --reporter doc > test/report/mocha.html"
+    "test": "mocha test/mocha.js",
+    "rapport": "mocha test/mocha.js --reporter doc > test/report/mocha.html"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
@@ -24,6 +25,7 @@
     "mongodb-restore":"~1.5.3",
     "mocha":"~3.0.0",
     "chai":"~3.5.0",
-    "supertest":"~2.0.0"
+    "supertest":"~2.0.0",
+    "mailgun-js":"~0.7.12"
   }
 }

@@ -1,8 +1,10 @@
 var crypto = require('crypto'); 
 var rand = require('csprng'); 
-var mongoose = require('mongoose'); 
-var nodemailer = require('nodemailer');
+var mongoose = require('mongoose');
 var m_users = require('../../model/model_users');
+var api_key = 'key-e435d1bb720e3934a86f44d189f52bc5';
+var domain = 'boxtade.com';
+var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 
 exports.change = function(id,opass,npass,callback) {  
 
@@ -38,62 +40,47 @@ exports.change = function(id,opass,npass,callback) {
             callback({'response':"Error while changing password",'res':false});
          }
      });
-}  
+};
 
 exports.code = function(email,callback) {
-
-    var smtpTransport = nodemailer.createTransport({
-
-        "service": "Mailgun",
-        "auth": {
-            "user": "admin@boxtade.com",
-            "pass": "850518Ks"
-        }
-
-    });
-
     var temp =rand(24, 24);
-    smtpTransport.verify(function (error, success) {
-          if(error){
-               callback({'response': "Error Transport. Try Again !", 'res': false});
-          }
-          else{
-              m_users.find({email: email}, function (err, users) {
+    m_users.find({email: email}, function (err, users) {
+        if (users.length != 0) {
+            m_users.findOne({email: email}, function (err, doc) {
+                doc.temp_str = temp;
+                doc.save();
 
-                    if (users.length != 0) {
+                var mailOptions = {
+                    from: "noreply <noreply@boxtade.com>",
+                    to: email,
+                    subject: "Reset Your Password on b-thinker",
+                    text: "Hello " + email + ".\nCode to reset your Password is " + temp + ".\nb-thinker team.",
+                };
 
-                        m_users.findOne({email: email}, function (err, doc) {
-                              doc.temp_str = temp;
-                              doc.save();
-
-                              console.log(temp);
-                              var mailOptions = {
-                                   from: "noreply <noreply@boxtade.com>",
-                                   to: email,
-                                   subject: "Reset Your Password on b-thinker",
-                                   text: "Hello " + email + ".\nCode to reset your Password is " + temp + ".\nb-thinker team.",
-
-                              }
-
-                              smtpTransport.sendMail(mailOptions, function (error, response) {
-                                   if (error) {
-                                        callback({'response': "Error While Resetting password. Try Again !", 'res': false});
-                                   } else {
-                                        callback({
-                                             'response': "Check your Email and enter the verification code to reset your Password.",
-                                             'res': true
-                                        });
-                                   }
-                              });
-                         });
+                mailgun.messages().send(mailOptions, function (error, body) {
+                    if (error) {
+                        callback({'response': "Error While Resetting password. Try Again !", 'res': false});
                     } else {
-
-                         callback({'response': "Email Does not Exists.", 'res': false});
-
+                        if(require('../../config/constant').debug_mode){
+                            callback({
+                                'code':temp,
+                                'response': "Check your Email and enter the verification code to reset your Password.",
+                                'res': true
+                            });
+                        }
+                        else{
+                            callback({
+                                'response': "Check your Email and enter the verification code to reset your Password.",
+                                'res': true
+                            });
+                        }
                     }
-               });
-          }
-     });
+                });
+            });
+        } else {
+            callback({'response': "Email Does not Exist.", 'res': false});
+        }
+    });
 };
 
 exports.reset = function(email,code,npass,callback) {

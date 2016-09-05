@@ -5,10 +5,10 @@ var token = require('./token_acces');
 var m_users = require('../../model/model_users');
 
 exports.login = function(req,res) {
-    m_users.open();
+
     var email = req.body.email;
     var password = req.body.password;
-
+    m_users.open();
     login.login(email, password, function (found) {
         res.json(found);
         m_users.close();
@@ -58,7 +58,6 @@ exports.password_reset = function(req, res) {
     var npass = req.body.newpass;
 
     password.reset(email,code,npass,function(found){
-        console.log(found);
         m_users.backup();
         res.json(found);
         m_users.close();

@@ -8,9 +8,6 @@ var userSchema = mongoose.Schema({
     temp_str:String
 });
 
-// module.exports = mongoose.model('users', userSchema);
-// module.exports.m = new model();
-
 module.exports = require('./model').createModel('users', userSchema);
 module.exports.open = function(){require('./model').open()};
 module.exports.close = function(){require('./model').close()};

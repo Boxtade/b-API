@@ -6,9 +6,9 @@ module.exports = function(app) {
     
     app.get("/bthinker/tasks",task.get_tasks);
     
-    app.get("/bthinker/tasks/:id",task.get_task);
+    app.get("/bthinker/task",task.get_task);
     
-    app.put('/bthinker/tasks/:id',task.update_task);
+    app.put('/bthinker/task',task.update_task);
     
-    app.delete('/bthinker/tasks/:id',task.delete_task);
+    app.delete('/bthinker/task',task.delete_task);
 };

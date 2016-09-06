@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var global = require('../handler/global/global');
 
 var app;
-var token1,token2;
+var token1,token2,taskNo5,taskNo2;
 
 module.exports = function(a) {
     app = a;
@@ -14,7 +14,6 @@ module.exports = function(a) {
                 done();
             });
         });
-
     });
     describe('status', function () {
         describe("GET/ status", getStatus);
@@ -26,10 +25,14 @@ module.exports = function(a) {
     });
     describe('password', function () {
         describe("POST/ users/password/change", postUsersPasswordChange);
-        describe("POST/ users/password/code",postUsersPasswordCodeAndReset);
+        describe("POST/ users/password/code users/password/reset",postUsersPasswordCodeAndReset);
     });
     describe('bthinker tasks/',function(){
         describe("POST/ bthinker/tasks",postCreateTask);
+        describe("GET/ bthinker/tasks",getAllTasks);
+        describe("GET/ bthinker/task",getTask);
+        describe("PUT/ bthinker/task",updateTask);
+        describe("DELETE/ bthinker/task",deleteTask);
     });
     describe('global',function(){
         describe("GET/ global variable : count_tasks",getCountTasks);
@@ -108,7 +111,7 @@ var postUsersRegister = function() {
                         throw new Error("Error during creation : " + res.body.response);
                     }
                     else{
-                        console.log(res.body.response);
+                        console.log("\t\t\t"+res.body.response);
                     }
                 })
                 .expect(200)
@@ -131,7 +134,7 @@ var postUsersRegister = function() {
                         throw new Error("Error during creation : " + res.body.response);
                     }
                     else{
-                        console.log(res.body.response);
+                        console.log("\t\t\t"+res.body.response);
                     }
                 })
                 .expect(200)
@@ -201,7 +204,7 @@ var postUsersToken = function(){
                 .set('Content-Type', 'application/json')
                 .send(json)
                 .expect(function (res) {
-                    console.log("token kvin.salles@gmail.com : "+res.body.token);
+                    console.log("\t\t\t"+"token kvin.salles@gmail.com : "+res.body.token);
                     if (!res.body.res){
                         throw new Error("Error during creation : " + res.body.response);
                     }
@@ -223,7 +226,7 @@ var postUsersToken = function(){
                 .set('Content-Type', 'application/json')
                 .send(json)
                 .expect(function (res) {
-                    console.log("token boxtade@gmail.com : "+res.body.token);
+                    console.log("\t\t\t"+"token boxtade@gmail.com : "+res.body.token);
                     if (!res.body.res){
                         throw new Error("Error during creation : " + res.body.response);
                     }
@@ -391,26 +394,261 @@ var setCountTasks = function(){
 var postCreateTask = function(){
     describe("should create ten posts", function () {
         for(var i = 0;i<10;i++){
-            it("should have http code : 200", function (done) {
-                var json = {
-                    title: "My task",
-                    content : "Voici le contenu du post. Interessant, non!!!!",
-                    token:token1
-                };
+            if(i%2 == 0){
+                it("should have http code : 200 with user1", function (done) {
+                    var json = {
+                        title: "My task user1 No : ",
+                        content : "Voici le contenu du post. Interessant, non!!!!",
+                        token:token1
+                    };
 
-                request(app)
-                    .post('/bthinker/tasks')
-                    .set('Content-Type', 'application/json')
-                    .send(json)
-                    .expect(function (res) {
-                        if (!res.body.res){
-                            throw new Error("Error during creation : " + res.body.response);
-                        }
-                    })
-                    .expect(200,done);
-            });
+                    request(app)
+                        .post('/bthinker/tasks')
+                        .set('Content-Type', 'application/json')
+                        .send(json)
+                        .expect(function (res) {
+                            if (!res.body.res){
+                                throw new Error("Error during creation : " + res.body.response);
+                            }
+                        })
+                        .expect(200,done);
+                });
+            }
+            else{
+                it("should have http code : 200 with user2", function (done) {
+                    var json = {
+                        title: "My task user2 No : ",
+                        content : "Voici le contenu du post. Interessant, non!!!!",
+                        token:token2
+                    };
+
+                    request(app)
+                        .post('/bthinker/tasks')
+                        .set('Content-Type', 'application/json')
+                        .send(json)
+                        .expect(function (res) {
+                            if (!res.body.res){
+                                throw new Error("Error during creation : " + res.body.response);
+                            }
+                        })
+                        .expect(200,done);
+                });
+            }
         }
     });
-
 };
 
+var getAllTasks = function(){
+  describe("should get all tasks's user1",function(){
+      it("should have http code : 200", function (done) {
+          var json = {token: token1};
+
+          request(app)
+              .get('/bthinker/tasks')
+              .set('Content-Type', 'application/json')
+              .send(json)
+              .expect(function (res) {
+                  if (!res.body.res){
+                      throw new Error("Error during creation : " + res.body.response);
+                  }
+
+                  var tasks = res.body.tasks;
+                  for(var index in tasks){
+                      if(index == 2)
+                        taskNo5 = tasks[index].id;
+                      console.log("\t\t\t"+tasks[index].title+tasks[index].count);
+                      if(tasks[index].token != token1)
+                          throw new Error("Error matching token.");
+                  }
+              })
+              .expect(200,done);
+      });
+  });
+
+    describe("should get all tasks's user2",function(){
+        it("should have http code : 200", function (done) {
+            var json = {token: token2};
+
+            request(app)
+                .get('/bthinker/tasks')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+
+                    var tasks = res.body.tasks;
+                    for(var index in tasks){
+                        if(index == 4)
+                            taskNo2 = tasks[index].id;
+                        console.log("\t\t\t"+tasks[index].title+tasks[index].count);
+                        if(tasks[index].token != token2)
+                            throw new Error("Error matching token.");
+                    }
+                })
+                .expect(200,done);
+        });
+    })
+};
+
+var getTask = function(){
+    describe("should get tasks number 5 of user1",function(){
+        it("should have http code : 200", function (done) {
+            var json = {
+                token: token1,
+                id:taskNo5
+            };
+
+            request(app)
+                .get('/bthinker/task')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                    var task = res.body.task;
+                    console.log("\t\t\t"+task.title+task.count);
+                    if(task.token != token1)
+                        throw new Error("Error matching token.");
+                })
+                .expect(200,done);
+        });
+    });
+
+    describe("should get tasks number 2 of user2",function(){
+        it("should have http code : 200", function (done) {
+            var json = {
+                token: token2,
+                id:taskNo2
+            };
+
+            request(app)
+                .get('/bthinker/task')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+
+                    var task = res.body.task;
+                    console.log("\t\t\t"+task.title+task.count);
+                    if(task.token != token2)
+                        throw new Error("Error matching token.");
+                })
+                .expect(200,done);
+        });
+    })
+};
+
+var updateTask = function(){
+    describe("should update tasks number 5 of user1",function(){
+        it("should have http code : 200", function (done) {
+            var json = {
+                token: token1,
+                id:taskNo5,
+                title:"MY TASK USER1 NO : ",
+                content:"VOICI LE CONTENU DU POST. INTERESSANT, NON!!!!"
+            };
+
+            request(app)
+                .put('/bthinker/task')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                    var task = res.body.task;
+                    console.log("\t\t\t"+task.title+task.count);
+                    console.log("\t\t\t"+task.content);
+                    if(task.token != token1)
+                        throw new Error("Error matching token.");
+                })
+                .expect(200,done);
+        });
+    });
+
+    describe("should get tasks number 2 of user2",function(){
+        it("should have http code : 200", function (done) {
+            var json = {
+                token: token2,
+                id:taskNo2,
+                title:"MY TASK USER2 NO : ",
+                content:"VOICI LE CONTENU DU POST. INTERESSANT, NON!!!!"
+            };
+
+            request(app)
+                .put('/bthinker/task')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+
+                    var task = res.body.task;
+                    console.log("\t\t\t"+task.title+task.count);
+                    console.log("\t\t\t"+task.content);
+                    if(task.token != token2)
+                        throw new Error("Error matching token.");
+                })
+                .expect(200,done);
+        });
+    })
+};
+
+var deleteTask = function(){
+    describe("should deleted tasks number 5 of user1",function(){
+        it("should have http code : 200", function (done) {
+            var json = {
+                token: token1,
+                id:taskNo5
+            };
+
+            request(app)
+                .delete('/bthinker/task')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                    var task = res.body.task;
+                    console.log("\t\t\t"+task.title+task.count);
+                    console.log("\t\t\t"+task.content);
+                    if(task.token != token1)
+                        throw new Error("Error matching token.");
+                })
+                .expect(200,done);
+        });
+    });
+
+    describe("should get tasks number 2 of user2",function(){
+        it("should have http code : 200", function (done) {
+            var json = {
+                token: token2,
+                id:taskNo2
+            };
+
+            request(app)
+                .delete('/bthinker/task')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+
+                    var task = res.body.task;
+                    console.log("\t\t\t"+task.title+task.count);
+                    console.log("\t\t\t"+task.content);
+                    if(task.token != token2)
+                        throw new Error("Error matching token.");
+                })
+                .expect(200,done);
+        });
+    })
+};

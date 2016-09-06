@@ -2,7 +2,7 @@ var task = require("../handler/b_thinker/bthinker");
 
 module.exports = function(app) {
 
-    app.post('/bthinker/tasks',task.create_task);
+    app.post('/bthinker/task',task.create_task);
     
     app.get("/bthinker/tasks",task.get_tasks);
     

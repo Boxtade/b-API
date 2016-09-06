@@ -28,7 +28,7 @@ module.exports = function(a) {
         describe("POST/ users/password/code users/password/reset",postUsersPasswordCodeAndReset);
     });
     describe('bthinker tasks/',function(){
-        describe("POST/ bthinker/tasks",postCreateTask);
+        describe("POST/ bthinker/task",postCreateTask);
         describe("GET/ bthinker/tasks",getAllTasks);
         describe("GET/ bthinker/task",getTask);
         describe("PUT/ bthinker/task",updateTask);
@@ -403,7 +403,7 @@ var postCreateTask = function(){
                     };
 
                     request(app)
-                        .post('/bthinker/tasks')
+                        .post('/bthinker/task')
                         .set('Content-Type', 'application/json')
                         .send(json)
                         .expect(function (res) {
@@ -423,7 +423,7 @@ var postCreateTask = function(){
                     };
 
                     request(app)
-                        .post('/bthinker/tasks')
+                        .post('/bthinker/task')
                         .set('Content-Type', 'application/json')
                         .send(json)
                         .expect(function (res) {

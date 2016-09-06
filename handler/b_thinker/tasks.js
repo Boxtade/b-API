@@ -60,6 +60,6 @@ exports.delete_task  = function(args,callback){
         if (err)
             callback({'res': false, 'response': "Error while the process"});
         else
-            callback({'res': true, 'response': "Done and update!", task: task});
+            callback({'res': true, 'response': "Done and delete!", task: task});
     });
 };

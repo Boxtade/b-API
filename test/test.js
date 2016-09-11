@@ -22,6 +22,7 @@ module.exports = function(a) {
         describe("POST/ users/register", postUsersRegister);
         describe("POST/ users/login", postUsersLogin);
         describe("POST/ users/token", postUsersToken);
+        describe("GET/ users/email", getUsersEmail);
     });
     describe('password', function () {
         describe("POST/ users/password/change", postUsersPasswordChange);
@@ -233,6 +234,55 @@ var postUsersToken = function(){
                     else{
                         if(res.body.token != token2)
                             throw new Error("It doesn't same token");
+                    }
+                })
+                .expect(200)
+                .end(done);
+        });
+    });
+};
+
+var getUsersEmail = function(){
+    describe("should get email for both users", function () {
+        it("get email kvin.salles@gmail.com", function (done) {
+            var json = {
+                token: token1
+            };
+
+            request(app)
+                .get('/users/email')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    console.log("\t\t\t"+"email : "+res.body.email);
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                    else{
+                        if(res.body.email != "kvin.salles@gmail.com")
+                            throw new Error("It doesn't same email");
+                    }
+                })
+                .expect(200)
+                .end(done);
+        });
+        it("get email boxtade@gmail.com", function (done) {
+            var json = {
+                token: token2
+            };
+
+            request(app)
+                .get('/users/email')
+                .set('Content-Type', 'application/json')
+                .send(json)
+                .expect(function (res) {
+                    console.log("\t\t\t"+"email : "+res.body.email);
+                    if (!res.body.res){
+                        throw new Error("Error during creation : " + res.body.response);
+                    }
+                    else{
+                        if(res.body.email != "boxtade@gmail.com")
+                            throw new Error("It doesn't same email");
                     }
                 })
                 .expect(200)

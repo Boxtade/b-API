@@ -13,4 +13,6 @@ module.exports = function(app) {
      app.post('/users/password/reset',users.password_reset);
 
      app.post('/users/token',users.token);
+
+     app.get('/users/email',users.email);
 };

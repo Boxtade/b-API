@@ -2,6 +2,7 @@ var password = require('./password');
 var register = require('./register');
 var login = require('./login');
 var token = require('./token_acces');
+var info = require('./info');
 var m_users = require('../../model/model_users');
 
 exports.login = function(req,res) {
@@ -69,6 +70,16 @@ exports.token =  function(req, res) {
     var tkn = req.body.token;
 
     token.token(tkn,function(found){
+        res.json(found);
+        m_users.close();
+    });
+};
+
+exports.email =  function(req, res) {
+    m_users.open();
+    var token;
+    (req.body.token === undefined)?(token=req.query.token):(token = req.body.token);
+    info.email(token,function(found){
         res.json(found);
         m_users.close();
     });

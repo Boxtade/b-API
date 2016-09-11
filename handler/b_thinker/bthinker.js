@@ -6,21 +6,28 @@ var m_tasks = require('../../model/model_tasks');
 var m_users = require('../../model/model_users');
 
 var _checkIfUserIsValid = function(token,callback){
-    m_users.find({token: token},function(err,users) {
-        if (users.length != 0) {
-            callback({'res':false,"response":"User doesn't exist"});
-        }
-        else
-            callback({'res':true,"response":"User exists"});
-    });
+    if(token === undefined){
+        callback({'res':false,"response":"No token"});
+    }
+    else{
+        m_users.find({token: token},function(err,users) {
+            if (users.length == 0) {
+                callback({'res':false,"response":"User doesn't exist"});
+            }
+            else
+                callback({'res':true,"response":"User exists"});
+        });
+    }
 };
 
 exports.create_task = function(req,res){
     m_tasks.open();
     var token = req.body.token;
     _checkIfUserIsValid(token,function(err){
-        if(err.res)
+        if(!err.res){
+            m_tasks.close();
             res.status(400).json(err);
+        }
         else{
             var args = {
                 title:req.body["title"],
@@ -37,11 +44,15 @@ exports.create_task = function(req,res){
 };
 
 exports.get_tasks = function(req,res){
-    m_tasks.open();
-    var token = req.body.token;
+    m_tasks.open()
+
+    var token;
+    req.body.token === undefined?token = req.query.token:token = req.body.token;
     _checkIfUserIsValid(token,function(err){
-        if(err.res)
+        if(!err.res){
+            m_tasks.close();
             res.status(400).json(err);
+        }
         else{
             var args = {
                 token:token
@@ -57,11 +68,15 @@ exports.get_tasks = function(req,res){
 
 exports.get_task = function(req,res){
     m_tasks.open();
-    var token = req.body.token;
-    var id = req.body.id;
+    var token;
+    req.body.token === undefined?token = req.query.token:token = req.body.token;
+    var id;
+    req.body.id === undefined?id = req.query.id:id = req.body.id;
     _checkIfUserIsValid(token,function(err){
-        if(err.res)
+        if(!err.res){
+            m_tasks.close();
             res.status(400).json(err);
+        }
         else{
             var args = {
                 token:token,
@@ -83,8 +98,10 @@ exports.update_task = function(req,res){
     var title = req.body.title;
     var content = req.body.content;
     _checkIfUserIsValid(token,function(err){
-        if(err.res)
+        if(!err.res){
+            m_tasks.close();
             res.status(400).json(err);
+        }
         else{
             var args = {
                 token:token,
@@ -102,12 +119,16 @@ exports.update_task = function(req,res){
 };
 
 exports.delete_task  = function(req,res){
-    m_tasks.open();
-    var token = req.body.token;
-    var id = req.body.id;
+    m_tasks.open()
+    var token;
+    req.body.token === undefined?token = req.query.token:token = req.body.token;
+    var id;
+    req.body.id === undefined?id = req.query.id:id = req.body.id;
     _checkIfUserIsValid(token,function(err){
-        if(err.res)
+        if(!err.res){
+            m_tasks.close();
             res.status(400).json(err);
+        }
         else{
             var args = {
                 token:token,

@@ -17,10 +17,10 @@ exports.create_task = function(args,callback){
             });
             task.save(function(err){
                 if(err)
-                    callback({'res':false,'response':"Don't save task"});
+                    callback({'res':false,'response':"Task does not save"});
                 global.setCountTasks(count,function(err){
                     if(err)
-                        callback({'res':false,'response':"Error updating count_tasks"});
+                        callback({'res':false,'response':"Error while updating count_tasks"});
                     callback({'res':true,'response':"New task created."});
                 })
             });
@@ -31,7 +31,7 @@ exports.create_task = function(args,callback){
 exports.get_tasks = function(args,callback){
     m_tasks.find({token: args.token}).sort({ count: -1 }).exec(function(err,tasks){
         if(err)
-            callback({'res':false,'response':"Error while the process"});
+            callback({'res':false,'response':"Error during the process"});
         else
             callback({'res':true,'response':"Done!",tasks:tasks});
     })
@@ -40,7 +40,7 @@ exports.get_tasks = function(args,callback){
 exports.get_task = function(args,callback){
     m_tasks.findOne({token: args.token,id:args.id}).exec(function(err,task){
         if(err)
-            callback({'res':false,'response':"Error while the process"});
+            callback({'res':false,'response':"Error during the process"});
         else
             callback({'res':true,'response':"Done!",task:task});
     })
@@ -49,17 +49,17 @@ exports.get_task = function(args,callback){
 exports.update_task = function(args,callback){
     m_tasks.findOneAndUpdate({token: args.token,id:args.id},{title: args.title,content : args.content},function(err,task) {
         if (err)
-            callback({'res': false, 'response': "Error while the process"});
+            callback({'res': false, 'response': "Error during the process"});
         else
-            callback({'res': true, 'response': "Done and update!", task: task});
+            callback({'res': true, 'response': "Done and updated!", task: task});
     });
 };
 
 exports.delete_task  = function(args,callback){
     m_tasks.findOneAndRemove({token: args.token,id:args.id},function(err,task) {
         if (err)
-            callback({'res': false, 'response': "Error while the process"});
+            callback({'res': false, 'response': "Error during the process"});
         else
-            callback({'res': true, 'response': "Done and delete!", task: task});
+            callback({'res': true, 'response': "Done and deleted!", task: task});
     });
 };

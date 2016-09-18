@@ -20,20 +20,20 @@ exports.change = function(id,opass,npass,callback) {
              var hashed_password = crypto.createHash('sha512').update(newpass).digest("hex");
 
              if(hash_db == hashed_password){
-                  if (npass.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/) && npass.length > 4 && npass.match(/[0-9]/)) {
+                  if (npass.length > 0) {
                       m_users.findOne({ token: id }, function (err, doc){
                             doc.hashed_password = hashed_passwordn;
                             doc.salt = temp1;
                             doc.save();
 
-                       callback({'response':"Password Sucessfully Changed",'res':true});
+                       callback({'response':"Password successfully changed",'res':true});
                        });
                   }else{
-                       callback({'response':"New Password is Weak. Try a Strong Password !",'res':false});
+                       callback({'response':"New password is empty.",'res':false});
                   }
              }
              else{
-                  callback({'response':"Passwords do not match. Try Again !",'res':false});
+                  callback({'response':"Password does not match with the old password. Try Again !",'res':false});
              }
          }
          else{
@@ -64,13 +64,13 @@ exports.code = function(email,callback) {
                         if(require('../../config/constant').debug_mode){
                             callback({
                                 'code':temp,
-                                'response': "Check your Email and enter the verification code to reset your Password.",
+                                'response': "Check your email and enter the verification code to reset your password.",
                                 'res': true
                             });
                         }
                         else{
                             callback({
-                                'response': "Check your Email and enter the verification code to reset your Password.",
+                                'response': "Check your email and enter the verification code to reset your password.",
                                 'res': true
                             });
                         }
@@ -78,7 +78,7 @@ exports.code = function(email,callback) {
                 });
             });
         } else {
-            callback({'response': "Email Does not Exist.", 'res': false});
+            callback({'response': "Email does not exist.", 'res': false});
         }
     });
 };
@@ -93,18 +93,18 @@ exports.reset = function(email,code,npass,callback) {
                var hashed_password = crypto.createHash('sha512').update(newpass1).digest("hex");
 
                if(temp == code){
-                    if (npass.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/) && npass.length > 4 && npass.match(/[0-9]/)) {
+                    if (npass.length > 0) {
                         m_users.findOne({ email: email }, function (err, doc){
                               doc.hashed_password= hashed_password;
                               doc.salt = temp1;
                               doc.temp_str = "";
                               doc.save();
 
-                              callback({'response':"Password Sucessfully Changed",'res':true});
+                              callback({'response':"Password successfully changed",'res':true});
                          });
                     }
                     else{
-                         callback({'response':"New Password is Weak. Try a Strong Password !",'res':false});
+                         callback({'response':"New password is empty.",'res':false});
                     }
                }
                else{

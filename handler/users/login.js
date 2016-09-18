@@ -12,10 +12,10 @@ exports.login = function(email,password,callback) {
             var newpass = temp + password; 
             var hashed_password = crypto.createHash('sha512').update(newpass).digest("hex"); 
             if(hash_db == hashed_password){
-                callback({'response':"Login Sucess",'res':true,'token':id});
+                callback({'response':"Login successful",'res':true,'token':id});
             }
             else{
-                callback({'response':"Invalid Password",'res':false});
+                callback({'response':"Invalid password",'res':false});
             } 
         }
         else {

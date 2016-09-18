@@ -8,7 +8,7 @@ exports.register = function(email,password,callback) {
     var x = email;
     if(!(x.indexOf("@")==x.length)){
         if(!(x.match("hotmail") || x.match("outlook") || x.match("msn"))){
-            if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/) && password.length > 4 && password.match(/[0-9]/)) {
+            if (password.length > 0) {
                 var temp =rand(160, 36);
                 var newpass = temp + password;
                 var token = crypto.createHash('sha512').update(email +rand).digest("hex");
@@ -26,22 +26,22 @@ exports.register = function(email,password,callback) {
 
                     if(len == 0){
                         newuser.save(function (err) {
-                            callback({'res':true ,'response':"Sucessfully Registered"});});
+                            callback({'res':true ,'response':"You have been successfully registered"});});
                     }
                     else{
-                        callback({'res':false,'response':"Email already Registered"});
+                        callback({'res':false,'response':"Email is already registered"});
                     }
                 });
             }
             else{
-                callback({'res':false,'response':"Password Weak"});
+                callback({'res':false,'response':"Password is empty"});
             }
         }
         else{
-            callback({'res':false,'response':"Microsoft email are not accepted"});
+            callback({'res':false,'response':"Microsoft emails are not accepted"});
         }
     }
     else{
-        callback({'res':false,'response':"Email Not Valid"});
+        callback({'res':false,'response':"Email is not valid"});
     }
 }  ;
